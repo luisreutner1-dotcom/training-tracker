@@ -10,39 +10,47 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0c0c0f;
-      --surface: #131318;
-      --surface2: #1c1c24;
-      --border: #26262f;
+      --bg: #09090c;
+      --surface: #111116;
+      --surface2: #18181f;
+      --surface3: #1e1e28;
+      --border: #22222d;
+      --border2: #2a2a38;
       --accent: #00e5a0;
-      --accent2: #ff6584;
+      --accent-dim: rgba(0,229,160,0.12);
+      --accent2: #7c6af7;
       --green: #00e5a0;
-      --yellow: #f0b429;
-      --red: #f03e3e;
-      --text: #eeeef2;
-      --text2: #5a5a72;
+      --yellow: #f5a623;
+      --red: #ef4444;
+      --text: #f0f0f4;
+      --text2: #52526b;
+      --text3: #38384f;
       --radius: 2px;
+      --font-num: 'SF Mono', ui-monospace, 'Fira Code', monospace;
     }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
     #root { display: flex; min-height: 100vh; }
 
     /* Layout */
     .sidebar { width: 200px; background: var(--bg); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; flex-shrink: 0; }
-    .sidebar-logo { padding: 0 20px 28px; font-size: 15px; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px; text-transform: uppercase; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 500; transition: all 0.15s; }
+    .sidebar-logo { padding: 0 20px 28px; font-size: 13px; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 8px; letter-spacing: 2px; text-transform: uppercase; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 500; transition: color 0.12s; }
     .nav-item:hover { color: var(--text); }
-    .nav-item.active { color: var(--accent); border-right: 2px solid var(--accent); }
-    .main { flex: 1; overflow-y: auto; padding: 32px; max-width: 1100px; }
-    .page-title { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+    .nav-item.active { color: var(--accent); background: var(--accent-dim); border-right: 2px solid var(--accent); }
+    .main { flex: 1; overflow-y: auto; padding: 32px; max-width: 860px; }
+    .page-title { font-size: 22px; font-weight: 800; margin-bottom: 24px; letter-spacing: -0.3px; }
 
     /* Cards */
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-    .card-title { font-size: 14px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+    .card-title { font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+
+    /* Number display */
+    .num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
 
     /* Grid */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 
     /* Stat cards */
     .stat-value { font-size: 32px; font-weight: 700; }
@@ -51,45 +59,46 @@
 
     /* Progress bar */
     .progress-wrap { background: var(--surface2); border-radius: 2px; height: 8px; margin-top: 12px; overflow: hidden; }
-    .progress-bar { height: 100%; border-radius: 2px; transition: width 0.3s; }
+    .progress-bar { height: 100%; border-radius: 2px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
 
     /* Buttons */
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.15s; letter-spacing: 0.2px; }
-    .btn-primary { background: var(--accent); color: #0c0c0f; }
-    .btn-primary:hover { opacity: 0.85; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 3px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.12s; letter-spacing: 0.2px; white-space: nowrap; }
+    .btn-primary { background: var(--accent); color: #09090c; }
+    .btn-primary:hover { background: #1af7b0; }
+    .btn-primary:active { transform: scale(0.97); }
     .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
-    .btn-ghost:hover { background: var(--surface2); color: var(--text); }
-    .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
-    .btn-danger:hover { background: var(--red); color: white; }
-    .btn-sm { padding: 5px 10px; font-size: 12px; }
-    .btn-icon { padding: 6px; }
+    .btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+    .btn-danger { background: transparent; color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover { background: rgba(239,68,68,0.1); }
+    .btn-sm { padding: 5px 12px; font-size: 12px; }
+    .btn-icon { padding: 7px; }
 
     /* Forms */
     .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
-    input, select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 10px 12px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.15s; }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    .form-group label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; letter-spacing: 0.3px; }
+    input, select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 10px 12px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.12s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); background: var(--surface3); }
     select option { background: var(--surface2); }
     textarea { resize: vertical; min-height: 80px; }
 
     /* Tags/Badges */
-    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 2px; font-size: 12px; font-weight: 500; }
-    .badge-green { background: rgba(67,233,123,0.15); color: var(--green); }
-    .badge-yellow { background: rgba(249,202,36,0.15); color: var(--yellow); }
-    .badge-red { background: rgba(255,107,107,0.15); color: var(--red); }
-    .badge-accent { background: rgba(108,99,255,0.15); color: var(--accent); }
+    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 2px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
+    .badge-green { background: rgba(0,229,160,0.1); color: var(--green); }
+    .badge-yellow { background: rgba(245,166,35,0.12); color: var(--yellow); }
+    .badge-red { background: rgba(239,68,68,0.1); color: var(--red); }
+    .badge-accent { background: rgba(124,106,247,0.12); color: var(--accent2); }
 
     /* Table */
     table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 10px 12px; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+    th { text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid var(--border); }
     td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--surface2); }
 
     /* Modal */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; backdrop-filter: blur(2px); }
+    .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 28px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.5); }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.2px; }
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
     /* Misc */
@@ -101,7 +110,7 @@
     .text-sm { font-size: 13px; }
     .text-muted { color: var(--text2); }
     .empty { text-align: center; padding: 40px; color: var(--text2); }
-    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 2px; font-size: 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--text2); }
+    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 2px; font-size: 11px; font-weight: 500; background: var(--surface2); border: 1px solid var(--border); color: var(--text2); }
     .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
     .macro-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     .macro-chip { background: var(--surface2); border-radius: 2px; padding: 4px 8px; font-size: 12px; color: var(--text2); }
@@ -116,31 +125,44 @@
     .meal-entry:hover { border-color: var(--accent); }
     .add-meal-btn { width: 100%; padding: 4px; background: none; border: 1px dashed var(--border); border-radius: 2px; color: var(--text2); font-size: 11px; cursor: pointer; }
     .add-meal-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .shopping-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .shopping-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
     .shopping-item:last-child { border-bottom: none; }
-    .shopping-check { width: 20px; height: 20px; border-radius: 2px; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .shopping-check { width: 20px; height: 20px; border-radius: 2px; border: 2px solid var(--border2); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.12s; }
     .shopping-check.checked { background: var(--green); border-color: var(--green); }
     .shopping-item.done .item-name { text-decoration: line-through; color: var(--text2); }
+
+    /* Segment bar for training phase */
+    .seg-bar { display: flex; gap: 3px; }
+    .seg { flex: 1; height: 4px; border-radius: 2px; background: var(--surface3); transition: background 0.3s; }
+    .seg.done { background: var(--accent); }
+    .seg.current { background: var(--accent); opacity: 0.5; }
 
     /* ── Mobile responsive ────────────────────────────────────────── */
     .bottom-nav {
       display: none;
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: 58px;
-      background: var(--surface);
+      height: 62px;
+      background: rgba(17,17,22,0.96);
       border-top: 1px solid var(--border);
       z-index: 50;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     .bottom-nav-item {
-      flex: 1; min-width: 48px;
+      flex: 1; min-width: 44px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 3px; cursor: pointer; color: var(--text2);
-      font-size: 9px; font-weight: 500; letter-spacing: 0.3px;
-      padding: 6px 4px; -webkit-tap-highlight-color: transparent;
+      gap: 4px; cursor: pointer; color: var(--text2);
+      font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 8px 4px; -webkit-tap-highlight-color: transparent; transition: color 0.12s;
+      position: relative;
     }
     .bottom-nav-item.active { color: var(--accent); }
+    .bottom-nav-item.active::before {
+      content: ''; position: absolute; top: 0; left: 25%; right: 25%;
+      height: 2px; background: var(--accent); border-radius: 0 0 2px 2px;
+    }
 
     @media (max-width: 640px) {
       .sidebar { display: none; }
@@ -452,89 +474,114 @@ function Dashboard({ data, setData }) {
     setData(d => ({ ...d, gewichtsverlauf: [...existing, { datum: today, kg: +gewichtInput }].sort((a,b) => a.datum.localeCompare(b.datum)) }));
     setGewichtInput('');
   };
-  const todayMeals = data.mahlzeitenplan[today] || {};
 
+  const todayMeals = data.mahlzeitenplan[today] || {};
   let totalKal = 0, totalProt = 0, totalKh = 0, totalFett = 0;
   for (const slot of Object.values(todayMeals)) {
     for (const entry of (slot || [])) {
       if (entry.type === 'rezept') {
         const rez = data.rezepte.find(r => r.id === entry.id);
-        if (rez) {
-          const n = calcRezeptNaehrwerte(rez, data.lebensmittel);
-          totalKal += n.kalorien * entry.menge;
-          totalProt += n.protein * entry.menge;
-          totalKh += n.kh * entry.menge;
-          totalFett += n.fett * entry.menge;
-        }
+        if (rez) { const n = calcRezeptNaehrwerte(rez, data.lebensmittel); totalKal += n.kalorien * entry.menge; totalProt += n.protein * entry.menge; totalKh += n.kh * entry.menge; totalFett += n.fett * entry.menge; }
       } else if (entry.type === 'lm') {
         const lm = data.lebensmittel.find(l => l.id === entry.id);
-        if (lm) {
-          const f = entry.menge / 100;
-          totalKal += lm.kalorien * f;
-          totalProt += lm.protein * f;
-          totalKh += lm.kh * f;
-          totalFett += lm.fett * f;
-        }
+        if (lm) { const f = entry.menge / 100; totalKal += lm.kalorien * f; totalProt += lm.protein * f; totalKh += lm.kh * f; totalFett += lm.fett * f; }
       }
     }
   }
 
   const { kalorienziel, proteinZiel, kohlenhydrateZiel, fettZiel } = data.settings;
-  const kalPct = Math.min(100, (totalKal / kalorienziel) * 100);
+  const kalFraction = Math.min(1, totalKal / kalorienziel);
   const remaining = kalorienziel - totalKal;
+  const kalColor = kalFraction >= 1 ? 'var(--red)' : kalFraction > 0.87 ? 'var(--yellow)' : 'var(--accent)';
+
+  // SVG donut ring
+  const R = 50, SW = 8, SIZE = 120;
+  const circ = 2 * Math.PI * R;
+  const dashOffset = circ * (1 - kalFraction);
 
   const todayStr = new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-
   const stunde = new Date().getHours();
-  const tagesgruss = stunde < 11 ? 'Guten Morgen' : stunde < 17 ? 'Guten Tag' : 'Guten Abend';
-  const kalFarbe = kalPct > 100 ? 'var(--red)' : kalPct > 85 ? 'var(--yellow)' : 'var(--accent)';
+  const gruss = stunde < 11 ? 'Guten Morgen' : stunde < 17 ? 'Guten Tag' : 'Guten Abend';
+
+  // Weight chart
+  const recent = gewichtsverlauf.slice(-12);
+  const hasHistory = recent.length > 1;
+  const lastKg = hasHistory ? recent[recent.length-1].kg : (todayWeight?.kg ?? null);
+  const firstKg = hasHistory ? recent[0].kg : null;
+  const diff = hasHistory ? +(lastKg - firstKg).toFixed(1) : null;
+
+  const MACROS = [
+    { label: 'Protein',  value: totalProt,  max: proteinZiel,        color: '#00e5a0' },
+    { label: 'Carbs',    value: totalKh,    max: kohlenhydrateZiel,   color: '#f5a623' },
+    { label: 'Fett',     value: totalFett,  max: fettZiel,            color: '#ef4444' },
+  ];
 
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 6 }}>{todayStr}</div>
-        <div style={{ fontSize: 28, fontWeight: 700 }}>{tagesgruss}</div>
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ fontSize: 11, color: 'var(--text2)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 1.5 }}>{todayStr}</div>
+        <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: -0.5 }}>{gruss}</div>
       </div>
 
-      {/* Haupt-Layout: Kalorien groß links, Mahlzeiten rechts */}
-      <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 16, marginBottom: 16, alignItems: 'start' }}>
+      <div className="dashboard-grid" style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 12, marginBottom: 12, alignItems: 'start' }}>
 
-        {/* Kalorien-Block */}
-        <div className="card">
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Heute gegessen</div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <span style={{ fontSize: 52, fontWeight: 800, color: kalFarbe, lineHeight: 1 }}>{Math.round(totalKal)}</span>
-              <span style={{ fontSize: 16, color: 'var(--text2)' }}>/ {kalorienziel} kcal</span>
+        {/* ── Kalorien-Ring ── */}
+        <div className="card" style={{ padding: '20px 16px' }}>
+          {/* Ring */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <div style={{ position: 'relative', width: SIZE, height: SIZE }}>
+              <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} style={{ transform: 'rotate(-90deg)' }}>
+                <defs>
+                  <linearGradient id="kal-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor={kalColor} stopOpacity="0.7"/>
+                    <stop offset="100%" stopColor={kalColor} stopOpacity="1"/>
+                  </linearGradient>
+                </defs>
+                <circle cx={SIZE/2} cy={SIZE/2} r={R} fill="none" stroke="var(--surface3)" strokeWidth={SW}/>
+                {kalFraction > 0 && (
+                  <circle cx={SIZE/2} cy={SIZE/2} r={R} fill="none"
+                    stroke="url(#kal-grad)" strokeWidth={SW}
+                    strokeDasharray={circ} strokeDashoffset={dashOffset}
+                    strokeLinecap="round"
+                    style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1)' }}
+                  />
+                )}
+              </svg>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                <div className="num" style={{ fontSize: 28, fontWeight: 900, color: kalColor, lineHeight: 1, letterSpacing: -1 }}>{Math.round(totalKal)}</div>
+                <div style={{ fontSize: 10, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1.5, marginTop: 3 }}>kcal</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Ziel + Rest */}
+          <div style={{ textAlign: 'center', marginBottom: 18 }}>
+            <div style={{ fontSize: 11, color: 'var(--text2)', marginBottom: 4 }}>
+              von <span className="num" style={{ color: 'var(--text)', fontWeight: 700 }}>{kalorienziel}</span> kcal
             </div>
             {remaining >= 0
-              ? <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 6 }}>noch {Math.round(remaining)} kcal übrig</div>
-              : <div style={{ fontSize: 13, color: 'var(--red)', marginTop: 6 }}>{Math.round(Math.abs(remaining))} kcal über Ziel</div>
+              ? <div style={{ fontSize: 12, color: 'var(--text2)' }}>noch <span className="num" style={{ color: 'var(--accent)', fontWeight: 700 }}>{Math.round(remaining)}</span> übrig</div>
+              : <div className="num" style={{ fontSize: 12, color: 'var(--red)', fontWeight: 700 }}>+{Math.round(-remaining)} über Ziel</div>
             }
           </div>
 
-          {/* Fortschrittsring als einfacher Balken */}
-          <div style={{ background: 'var(--surface2)', borderRadius: 2, height: 6, marginBottom: 24, overflow: 'hidden' }}>
-            <div style={{ height: '100%', borderRadius: 2, width: `${kalPct}%`, background: kalFarbe, transition: 'width 0.4s' }} />
-          </div>
-
-          {/* Makros kompakt */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {[
-              { label: 'Protein', value: totalProt, max: proteinZiel, color: 'var(--accent)' },
-              { label: 'Kohlenhydrate', value: totalKh, max: kohlenhydrateZiel, color: 'var(--yellow)' },
-              { label: 'Fett', value: totalFett, max: fettZiel, color: 'var(--red)' },
-            ].map(({ label, value, max, color }) => {
+          {/* Makro-Bars */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
+            {MACROS.map(({ label, value, max, color }) => {
               const pct = Math.min(100, max > 0 ? (value / max) * 100 : 0);
+              const over = value > max;
               return (
                 <div key={label}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                    <span style={{ color: 'var(--text2)' }}>{label}</span>
-                    <span style={{ color: value > max ? 'var(--red)' : 'var(--text2)' }}>{Math.round(value)}g</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 5 }}>
+                    <span style={{ fontSize: 10, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1 }}>{label}</span>
+                    <span className="num" style={{ fontSize: 13, fontWeight: 700, color: over ? 'var(--red)' : 'var(--text)' }}>
+                      {Math.round(value)}<span style={{ fontSize: 10, fontWeight: 400, color: 'var(--text2)' }}>g</span>
+                      <span style={{ fontSize: 10, color: 'var(--text3)', fontWeight: 400 }}> / {max}</span>
+                    </span>
                   </div>
-                  <div style={{ background: 'var(--surface2)', borderRadius: 2, height: 4, overflow: 'hidden' }}>
-                    <div style={{ height: '100%', borderRadius: 2, width: `${pct}%`, background: color }} />
+                  <div style={{ background: 'var(--surface3)', height: 3, borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${pct}%`, background: over ? 'var(--red)' : color, borderRadius: 2, transition: 'width 0.5s cubic-bezier(0.4,0,0.2,1)' }} />
                   </div>
                 </div>
               );
@@ -542,98 +589,106 @@ function Dashboard({ data, setData }) {
           </div>
         </div>
 
-        {/* Mahlzeiten heute */}
-        <div className="card">
-          <div style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mahlzeiten heute</div>
+        {/* ── Mahlzeiten heute ── */}
+        <div className="card" style={{ minHeight: 280 }}>
+          <div style={{ fontSize: 11, color: 'var(--text2)', marginBottom: 16, textTransform: 'uppercase', letterSpacing: 1 }}>Heute</div>
           {MAHLZEITEN.every(m => !(todayMeals[m] || []).length) ? (
-            <div style={{ color: 'var(--text2)', fontSize: 14, padding: '8px 0' }}>
-              Noch nichts eingetragen. Trag deine Mahlzeiten im Wochenplan ein.
+            <div style={{ padding: '32px 0', textAlign: 'center' }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--surface2)', margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon name="food" size={18} />
+              </div>
+              <div style={{ color: 'var(--text2)', fontSize: 13, fontWeight: 500 }}>Noch keine Mahlzeiten</div>
+              <div style={{ color: 'var(--text3)', fontSize: 12, marginTop: 4 }}>Im Wochenplan eintragen</div>
             </div>
-          ) : (
-            MAHLZEITEN.map(m => {
-              const entries = todayMeals[m] || [];
-              if (!entries.length) return null;
-              return (
-                <div key={m} style={{ marginBottom: 16 }}>
-                  <div style={{ fontSize: 11, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>{m}</div>
-                  {entries.map((e, i) => {
-                    let name = '', kcal = 0;
-                    if (e.type === 'rezept') {
-                      const r = data.rezepte.find(x => x.id === e.id);
-                      if (r) { name = r.name; const n = calcRezeptNaehrwerte(r, data.lebensmittel); kcal = Math.round(n.kalorien * e.menge); }
-                    } else {
-                      const l = data.lebensmittel.find(x => x.id === e.id);
-                      if (l) { name = l.name; kcal = Math.round(l.kalorien * e.menge / 100); }
-                    }
-                    return (
-                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--border)', fontSize: 14 }}>
-                        <span>{name}</span>
-                        <span style={{ color: 'var(--text2)' }}>{kcal} kcal</span>
-                      </div>
-                    );
-                  })}
+          ) : MAHLZEITEN.map(m => {
+            const entries = todayMeals[m] || [];
+            if (!entries.length) return null;
+            let slotKcal = 0;
+            entries.forEach(e => {
+              if (e.type === 'rezept') { const r = data.rezepte.find(x => x.id === e.id); if (r) slotKcal += calcRezeptNaehrwerte(r, data.lebensmittel).kalorien * e.menge; }
+              else { const l = data.lebensmittel.find(x => x.id === e.id); if (l) slotKcal += l.kalorien * e.menge / 100; }
+            });
+            return (
+              <div key={m} style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+                  <span style={{ fontSize: 10, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1 }}>{m}</span>
+                  <span className="num" style={{ fontSize: 11, color: 'var(--text2)' }}>{Math.round(slotKcal)} kcal</span>
                 </div>
-              );
-            })
-          )}
+                {entries.map((e, i) => {
+                  let name = '', kcal = 0;
+                  if (e.type === 'rezept') { const r = data.rezepte.find(x => x.id === e.id); if (r) { name = r.name; kcal = Math.round(calcRezeptNaehrwerte(r, data.lebensmittel).kalorien * e.menge); } }
+                  else { const l = data.lebensmittel.find(x => x.id === e.id); if (l) { name = l.name; kcal = Math.round(l.kalorien * e.menge / 100); } }
+                  return (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 0', borderBottom: i < entries.length-1 ? '1px solid var(--border)' : 'none' }}>
+                      <span style={{ fontSize: 13 }}>{name}</span>
+                      <span className="num" style={{ fontSize: 12, color: 'var(--text2)' }}>{kcal}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Körpergewicht */}
-      {(() => {
-        const recent = gewichtsverlauf.slice(-10);
-        const hasHistory = recent.length > 1;
-        const first = hasHistory ? recent[0].kg : null;
-        const last = hasHistory ? recent[recent.length - 1].kg : null;
-        const diff = hasHistory ? +(last - first).toFixed(1) : null;
-        const minKg = hasHistory ? Math.min(...recent.map(e => e.kg)) - 1 : 0;
-        const maxKg = hasHistory ? Math.max(...recent.map(e => e.kg)) + 1 : 100;
-        const W = 300, H = 60;
-        const px = (i) => (i / (recent.length - 1)) * W;
-        const py = (kg) => H - ((kg - minKg) / (maxKg - minKg)) * H;
-        const points = recent.map((e, i) => `${px(i)},${py(e.kg)}`).join(' ');
-        return (
-          <div className="card" style={{ marginTop: 0 }}>
-            <div style={{ marginBottom: 14 }}>
-              <div style={{ fontSize: 12, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>Körpergewicht</div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-                <div>
-                  {last != null ? (
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                      <span style={{ fontSize: 32, fontWeight: 800 }}>{last}</span>
-                      <span style={{ fontSize: 14, color: 'var(--text2)' }}>kg</span>
-                      {diff !== null && <span style={{ fontSize: 13, color: diff <= 0 ? 'var(--accent)' : 'var(--red)', fontWeight: 600 }}>{diff > 0 ? '+' : ''}{diff}kg</span>}
-                    </div>
-                  ) : (
-                    <div style={{ fontSize: 13, color: 'var(--text2)' }}>Noch kein Eintrag</div>
-                  )}
-                </div>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <input type="number" placeholder={todayWeight ? `${todayWeight.kg}` : 'kg'} value={gewichtInput}
-                    onChange={e => setGewichtInput(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && logGewicht()}
-                    style={{ width: 80 }} />
-                  <button className="btn btn-primary" onClick={logGewicht}>Eintragen</button>
-                </div>
+      {/* ── Körpergewicht ── */}
+      <div className="card">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: hasHistory ? 16 : 0 }}>
+          <div>
+            <div style={{ fontSize: 11, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Körpergewicht</div>
+            {lastKg != null ? (
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <span className="num" style={{ fontSize: 36, fontWeight: 900, letterSpacing: -1 }}>{lastKg}</span>
+                <span style={{ fontSize: 14, color: 'var(--text2)' }}>kg</span>
+                {diff !== null && (
+                  <span className="num" style={{ fontSize: 13, fontWeight: 700, color: diff <= 0 ? 'var(--accent)' : 'var(--red)', padding: '2px 8px', background: diff <= 0 ? 'rgba(0,229,160,0.1)' : 'rgba(239,68,68,0.1)', borderRadius: 2 }}>
+                    {diff > 0 ? '+' : ''}{diff} kg
+                  </span>
+                )}
               </div>
-            </div>
-            {hasHistory && (
-              <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 60, display: 'block' }}>
-                <polyline points={points} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            ) : <div style={{ fontSize: 13, color: 'var(--text2)' }}>Noch kein Eintrag</div>}
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <input type="number" step="0.1" placeholder={todayWeight ? String(todayWeight.kg) : 'kg'} value={gewichtInput}
+              onChange={e => setGewichtInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && logGewicht()}
+              style={{ width: 88 }} />
+            <button className="btn btn-primary" onClick={logGewicht}>Eintragen</button>
+          </div>
+        </div>
+
+        {hasHistory && (() => {
+          const W = 400, H = 70;
+          const minKg = Math.min(...recent.map(e => e.kg)) - 0.5;
+          const maxKg = Math.max(...recent.map(e => e.kg)) + 0.5;
+          const px = i => (i / (recent.length - 1)) * W;
+          const py = kg => H - ((kg - minKg) / (maxKg - minKg)) * H * 0.85 - H * 0.05;
+          const pts = recent.map((e, i) => `${px(i).toFixed(1)},${py(e.kg).toFixed(1)}`);
+          const linePts = pts.join(' ');
+          const areaPath = `M ${px(0).toFixed(1)},${py(recent[0].kg).toFixed(1)} ${pts.slice(1).map((p,i) => `L ${p}`).join(' ')} L ${px(recent.length-1).toFixed(1)},${H} L ${px(0).toFixed(1)},${H} Z`;
+          return (
+            <div>
+              <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" style={{ width: '100%', height: 70, display: 'block' }}>
+                <defs>
+                  <linearGradient id="wgt-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.25"/>
+                    <stop offset="100%" stopColor="var(--accent)" stopOpacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d={areaPath} fill="url(#wgt-grad)"/>
+                <polyline points={linePts} fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke"/>
                 {recent.map((e, i) => (
-                  <circle key={i} cx={px(i)} cy={py(e.kg)} r="3" fill="var(--accent)" />
+                  <circle key={i} cx={px(i)} cy={py(e.kg)} r="2.5" fill="var(--accent)" vectorEffect="non-scaling-stroke"/>
                 ))}
               </svg>
-            )}
-            {hasHistory && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text2)', marginTop: 6 }}>
-                <span>{new Date(recent[0].datum).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}</span>
-                <span>{new Date(recent[recent.length-1].datum).toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text3)', marginTop: 4 }}>
+                <span>{new Date(recent[0].datum+'T12:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}</span>
+                <span>{new Date(recent[recent.length-1].datum+'T12:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}</span>
               </div>
-            )}
-          </div>
-        );
-      })()}
+            </div>
+          );
+        })()}
+      </div>
     </div>
   );
 }
@@ -1970,40 +2025,65 @@ function Training({ data, setData }) {
           </div>
         )}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {curLogs.map((log, li) => {
             const u = uebungen.find(x => x.id === log.uebungId);
             if (!u) return null;
             const last = lastLog(u.id, activeAthlete);
+            const PHASE_COLORS = { hypertrophie: '#7c6af7', kraft: '#f5a623', power: '#ef4444' };
+            const phaseColor = phase ? (PHASE_COLORS[phase.id] || 'var(--accent)') : 'var(--accent)';
             return (
-              <div key={log.uebungId} className="card">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>{u.name}</div>
-                  <div style={{ textAlign: 'right', fontSize: 12 }}>
-                    {log.target && <div style={{ color: 'var(--accent)', fontWeight: 700 }}>Ziel: {log.target}kg × {phase?.reps}</div>}
-                    {last && <div style={{ color: 'var(--text2)', marginTop: 2 }}>letztes Mal: {last.log.sets.map(s => `${s.kg}×${s.reps}`).join('  ')}</div>}
+              <div key={log.uebungId} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 2, overflow: 'hidden' }}>
+                {/* Exercise header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: -0.2 }}>{u.name}</div>
+                  <div style={{ textAlign: 'right' }}>
+                    {log.target && (
+                      <div className="num" style={{ fontSize: 14, fontWeight: 800, color: phaseColor }}>
+                        {log.target} kg <span style={{ fontWeight: 400, fontSize: 12, color: 'var(--text2)' }}>× {phase?.reps}</span>
+                      </div>
+                    )}
+                    {last && (
+                      <div className="num" style={{ fontSize: 11, color: 'var(--text2)', marginTop: 1 }}>
+                        {last.log.sets.filter(s=>s.kg).slice(0,4).map(s=>`${s.kg}×${s.reps}`).join('  ')}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {log.sets.map((set, si) => (
-                    <div key={si} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 11, color: 'var(--text2)', width: 20, flexShrink: 0 }}>S{si+1}</span>
-                      <input type="number" placeholder="kg" value={set.kg}
-                        onChange={e => updateSet(li, si, 'kg', e.target.value)} style={{ width: 72 }} />
-                      <span style={{ color: 'var(--text2)', fontSize: 13 }}>kg</span>
-                      <input type="number" placeholder="Wdh" value={set.reps}
-                        onChange={e => updateSet(li, si, 'reps', e.target.value)} style={{ width: 60 }} />
-                      <span style={{ color: 'var(--text2)', fontSize: 13 }}>×</span>
-                      {log.sets.length > 1 && (
-                        <button onClick={() => removeSet(li, si)}
-                          style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 4px' }}>×</button>
-                      )}
-                    </div>
-                  ))}
+
+                {/* Sets */}
+                <div style={{ padding: '10px 16px 6px' }}>
+                  {log.sets.map((set, si) => {
+                    const setEpley = set.kg && set.reps && +set.reps > 0 ? calc1RM(+set.kg, +set.reps) : null;
+                    const isNewPR = setEpley && plan && (plan.athletes?.[activeAthlete]?.rm1[log.uebungId] || 0) > 0
+                      ? setEpley > plan.athletes[activeAthlete].rm1[log.uebungId]
+                      : false;
+                    return (
+                      <div key={si} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: 2, background: set.kg ? phaseColor + '22' : 'var(--surface2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <span className="num" style={{ fontSize: 11, fontWeight: 700, color: set.kg ? phaseColor : 'var(--text3)' }}>{si+1}</span>
+                        </div>
+                        <input type="number" inputMode="decimal" placeholder="kg" value={set.kg}
+                          onChange={e => updateSet(li, si, 'kg', e.target.value)}
+                          style={{ width: 76, fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: 15, textAlign: 'center', padding: '8px' }} />
+                        <span style={{ color: 'var(--text3)', fontSize: 12, fontWeight: 500 }}>kg</span>
+                        <input type="number" inputMode="numeric" placeholder="×" value={set.reps}
+                          onChange={e => updateSet(li, si, 'reps', e.target.value)}
+                          style={{ width: 58, fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: 15, textAlign: 'center', padding: '8px' }} />
+                        <span style={{ color: 'var(--text3)', fontSize: 12 }}>reps</span>
+                        {isNewPR && <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--yellow)', letterSpacing: 0.5, padding: '2px 6px', background: 'rgba(245,166,35,0.12)', borderRadius: 2 }}>PR</span>}
+                        {log.sets.length > 1 && (
+                          <button onClick={() => removeSet(li, si)}
+                            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 2px' }}>×</button>
+                        )}
+                      </div>
+                    );
+                  })}
+                  <button onClick={() => addSet(li)}
+                    style={{ width: '100%', marginTop: 2, marginBottom: 10, background: 'none', border: '1px dashed var(--border2)', color: 'var(--text2)', fontSize: 12, padding: '6px', cursor: 'pointer', borderRadius: 2, letterSpacing: 0.3 }}>
+                    + Satz
+                  </button>
                 </div>
-                <button onClick={() => addSet(li)} style={{ marginTop: 10, background: 'none', border: '1px solid var(--border)', color: 'var(--text2)', fontSize: 12, padding: '5px 12px', cursor: 'pointer' }}>
-                  + Satz
-                </button>
               </div>
             );
           })}
@@ -2105,93 +2185,144 @@ function Training({ data, setData }) {
         );
       })()}
 
-      {/* Aktiver Plan-Status */}
-      {plan && (
-        <div style={{ marginBottom: 20, padding: '16px', background: 'var(--surface)', border: `1px solid ${isPlanComplete(plan) ? 'var(--yellow)' : 'var(--border)'}` }}>
-          {isPlanComplete(plan) ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ fontWeight: 700, color: 'var(--yellow)' }}>Phase abgeschlossen</div>
-                <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 4 }}>
-                  {currentPhaseInfo.name} — {currentPhaseInfo.wochen} Wochen erledigt. Bereit für die nächste Phase?
+      {/* ── Aktiver Plan-Status ── */}
+      {plan && (() => {
+        const complete = isPlanComplete(plan);
+        const nextPhase = PHASEN_CONFIG[(plan.phaseIdx + 1) % PHASEN_CONFIG.length];
+        const PHASE_COLORS = { hypertrophie: '#7c6af7', kraft: '#f5a623', power: '#ef4444' };
+        const phaseColor = PHASE_COLORS[currentPhaseInfo.id] || 'var(--accent)';
+
+        return (
+          <div style={{ marginBottom: 20, padding: '18px 20px', background: 'var(--surface)', border: `1px solid ${complete ? 'var(--yellow)' : 'var(--border2)'}`, position: 'relative', overflow: 'hidden' }}>
+            {/* Background accent glow */}
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: complete ? 'var(--yellow)' : phaseColor, opacity: 0.8 }} />
+
+            {complete ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 11, color: 'var(--yellow)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 4 }}>Phase abgeschlossen</div>
+                  <div style={{ fontWeight: 700, fontSize: 16 }}>{currentPhaseInfo.name} · {currentPhaseInfo.wochen} Wochen</div>
+                  <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 3 }}>Nächste Phase: {nextPhase.name}</div>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="btn btn-ghost btn-sm" onClick={startPlanSetup}>Neu testen</button>
+                  <button className="btn btn-primary btn-sm" onClick={advancePhase}>Weiter zu {nextPhase.name} →</button>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-ghost" onClick={startPlanSetup}>Neu testen</button>
-                <button className="btn btn-primary" onClick={advancePhase}>
-                  Weiter zu {PHASEN_CONFIG[(plan.phaseIdx + 1) % PHASEN_CONFIG.length].name}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            ) : (
               <div>
-                <div style={{ fontSize: 11, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1 }}>Aktuelle Phase</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)', marginTop: 2 }}>{currentPhaseInfo.name}</div>
-                <div style={{ fontSize: 13, color: 'var(--text2)', marginTop: 2 }}>{currentPhaseInfo.sets}×{currentPhaseInfo.reps} Reps · {currentPhaseInfo.beschreibung}</div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
+                  <div>
+                    <div style={{ fontSize: 10, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 5 }}>Aktuelle Phase</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: phaseColor, letterSpacing: -0.5 }}>{currentPhaseInfo.name.toUpperCase()}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text2)', marginTop: 3 }}>
+                      {currentPhaseInfo.sets} Sätze × {currentPhaseInfo.reps} Reps · {currentPhaseInfo.beschreibung}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div className="num" style={{ fontSize: 36, fontWeight: 900, lineHeight: 1, letterSpacing: -1 }}>
+                      {currentWeek}
+                      <span style={{ fontSize: 16, fontWeight: 400, color: 'var(--text2)' }}> / {currentPhaseInfo.wochen}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text2)', marginTop: 3 }}>
+                      {weeksLeft === 1 ? 'letzte Woche' : `${weeksLeft} Wochen übrig`}
+                    </div>
+                  </div>
+                </div>
+                {/* Segment-Progressbar */}
+                <div className="seg-bar">
+                  {Array.from({ length: currentPhaseInfo.wochen }).map((_, i) => (
+                    <div key={i} className={`seg ${i < currentWeek - 1 ? 'done' : i === currentWeek - 1 ? 'current' : ''}`}
+                      style={{ background: i < currentWeek - 1 ? phaseColor : i === currentWeek - 1 ? phaseColor : undefined, opacity: i === currentWeek - 1 ? 0.4 : undefined }} />
+                  ))}
+                </div>
+                {/* Phase timeline */}
+                <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
+                  {PHASEN_CONFIG.map((p, i) => {
+                    const COLS = { hypertrophie: '#7c6af7', kraft: '#f5a623', power: '#ef4444' };
+                    const isActive = i === plan.phaseIdx;
+                    const isDone = i < plan.phaseIdx;
+                    return (
+                      <div key={p.id} style={{ fontSize: 10, padding: '2px 8px', borderRadius: 2, fontWeight: 600, letterSpacing: 0.5,
+                        background: isActive ? `${COLS[p.id]}22` : 'transparent',
+                        color: isActive ? COLS[p.id] : isDone ? 'var(--text3)' : 'var(--text3)',
+                        border: `1px solid ${isActive ? COLS[p.id] + '44' : 'transparent'}`,
+                        textDecoration: isDone ? 'line-through' : 'none' }}>
+                        {p.name}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 28, fontWeight: 800 }}>W{currentWeek}<span style={{ fontSize: 14, color: 'var(--text2)', fontWeight: 400 }}> / {currentPhaseInfo.wochen}</span></div>
-                <div style={{ fontSize: 12, color: 'var(--text2)' }}>{weeksLeft} Woche{weeksLeft !== 1 ? 'n' : ''} übrig</div>
-              </div>
-            </div>
-          )}
-          {/* Wochen-Fortschrittsbalken */}
-          {!isPlanComplete(plan) && (
-            <div style={{ background: 'var(--surface2)', height: 3, marginTop: 14 }}>
-              <div style={{ height: '100%', background: 'var(--accent)', width: `${((currentWeek - 1) / currentPhaseInfo.wochen) * 100}%`, transition: 'width 0.3s' }} />
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        );
+      })()}
 
       {/* Übungen nach Kategorie */}
       {(() => {
         const kats = [...new Set(uebungen.map(u => u.kat || u.muskel || 'Sonstiges'))];
         return kats.map(kat => (
-          <div key={kat} style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 11, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{kat}</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div key={kat} style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 10, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 6, fontWeight: 600 }}>{kat}</div>
+            <div style={{ border: '1px solid var(--border)', borderRadius: 2, overflow: 'hidden' }}>
               {uebungen.filter(u => (u.kat || u.muskel || 'Sonstiges') === kat).map(u => {
                 const aktiv = u.aktiv !== false;
                 const toggleAktiv = () => save({ uebungen: uebungen.map(x => x.id === u.id ? { ...x, aktiv: !aktiv } : x) });
                 const athletes = plan?.athletes || [];
                 const multiAthlete = athletes.length > 1;
+                const PHASE_COLORS = { hypertrophie: '#7c6af7', kraft: '#f5a623', power: '#ef4444' };
+                const phaseColor = currentPhaseInfo ? (PHASE_COLORS[currentPhaseInfo.id] || 'var(--accent)') : 'var(--accent)';
                 return (
                   <div key={u.id} style={{
-                    display: 'flex', alignItems: 'center', padding: '11px 14px',
-                    background: 'var(--surface)', border: '1px solid var(--border)',
-                    opacity: aktiv ? 1 : 0.45
+                    display: 'flex', alignItems: 'center', padding: '13px 16px',
+                    background: 'var(--surface)', borderBottom: '1px solid var(--border)',
+                    opacity: aktiv ? 1 : 0.35, transition: 'opacity 0.2s'
                   }}>
+                    {/* Active toggle */}
                     <div onClick={toggleAktiv} style={{
-                      width: 16, height: 16, border: `2px solid ${aktiv ? 'var(--accent)' : 'var(--border)'}`,
-                      background: aktiv ? 'var(--accent)' : 'transparent',
-                      marginRight: 12, cursor: 'pointer', flexShrink: 0
+                      width: 14, height: 14, borderRadius: 2,
+                      border: `2px solid ${aktiv ? phaseColor : 'var(--border2)'}`,
+                      background: aktiv ? phaseColor : 'transparent',
+                      marginRight: 14, cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s'
                     }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: 14 }}>{u.name}</div>
+
+                    {/* Name */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, fontSize: 14, letterSpacing: -0.1 }}>{u.name}</div>
                     </div>
-                    <div style={{ textAlign: 'right', marginRight: 12 }}>
-                      {aktiv && plan && (
-                        <div style={{ display: 'flex', gap: 16 }}>
-                          {athletes.map((ath, ai) => {
-                            const target = planTarget(u.id, ai);
-                            const last = lastLog(u.id, ai);
-                            return (
-                              <div key={ai} style={{ textAlign: 'right' }}>
-                                {multiAthlete && <div style={{ fontSize: 10, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 0.5 }}>{ath.name}</div>}
-                                {target ? <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)' }}>{target}kg <span style={{ fontSize: 11, color: 'var(--text2)', fontWeight: 400 }}>× {currentPhaseInfo?.reps}</span></div>
-                                         : <div style={{ fontSize: 11, color: 'var(--text2)' }}>kein 1RM</div>}
-                                {last && <div style={{ fontSize: 11, color: 'var(--text2)' }}>zuletzt: {last.log.sets.filter(s=>s.kg).map(s=>`${s.kg}×${s.reps}`).join(' ')}</div>}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                      {!plan && (() => { const last = lastLog(u.id); return last ? <div style={{ fontSize: 11, color: 'var(--text2)' }}>zuletzt: {last.log.sets.filter(s=>s.kg).map(s=>`${s.kg}×${s.reps}`).join(' ')}</div> : <div style={{ fontSize: 11, color: 'var(--text2)' }}>kein Eintrag</div>; })()}
+
+                    {/* Targets + last */}
+                    <div style={{ display: 'flex', gap: 20, alignItems: 'center', marginRight: 10 }}>
+                      {aktiv && plan && athletes.map((ath, ai) => {
+                        const target = planTarget(u.id, ai);
+                        const last = lastLog(u.id, ai);
+                        return (
+                          <div key={ai} style={{ textAlign: 'right' }}>
+                            {multiAthlete && <div style={{ fontSize: 9, color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 2 }}>{ath.name}</div>}
+                            {target
+                              ? <div className="num" style={{ fontSize: 15, fontWeight: 800, color: phaseColor, letterSpacing: -0.5 }}>
+                                  {target}<span style={{ fontSize: 11, fontWeight: 500, color: 'var(--text2)', marginLeft: 2 }}>kg</span>
+                                  <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text2)' }}> × {currentPhaseInfo?.reps}</span>
+                                </div>
+                              : <div style={{ fontSize: 11, color: 'var(--text3)' }}>kein 1RM</div>
+                            }
+                            {last && <div className="num" style={{ fontSize: 11, color: 'var(--text2)', marginTop: 1 }}>
+                              {last.log.sets.filter(s=>s.kg).slice(0,3).map(s=>`${s.kg}×${s.reps}`).join('  ')}
+                            </div>}
+                          </div>
+                        );
+                      })}
+                      {!plan && (() => {
+                        const last = lastLog(u.id);
+                        return last
+                          ? <div className="num" style={{ fontSize: 12, color: 'var(--text2)' }}>{last.log.sets.filter(s=>s.kg).slice(0,3).map(s=>`${s.kg}×${s.reps}`).join('  ')}</div>
+                          : <div style={{ fontSize: 11, color: 'var(--text3)' }}>kein Eintrag</div>;
+                      })()}
                     </div>
+
                     <button onClick={() => removeUebung(u.id)}
-                      style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', fontSize: 16, padding: '0 2px', opacity: 0.4 }}>×</button>
+                      style={{ background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 18, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}>×</button>
                   </div>
                 );
               })}
