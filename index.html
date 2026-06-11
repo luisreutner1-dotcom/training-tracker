@@ -137,36 +137,62 @@
     .seg.done { background: var(--accent); }
     .seg.current { background: var(--accent); opacity: 0.5; }
 
+    /* ── Athlete tabs ─────────────────────────────────────────────── */
+    .athlete-tabs { display: flex; gap: 0; border: 1px solid var(--border2); border-radius: 3px; overflow: hidden; margin-bottom: 20px; }
+    .athlete-tab {
+      flex: 1; padding: 10px 16px; background: var(--surface); border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--text2); transition: all 0.12s;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      border-right: 1px solid var(--border2);
+    }
+    .athlete-tab:last-child { border-right: none; }
+    .athlete-tab.active { background: var(--surface3); color: var(--text); }
+    .athlete-tab .tab-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--border2); transition: background 0.12s;
+    }
+    .athlete-tab.active .tab-dot { background: var(--accent); }
+    .athlete-tab .tab-label { font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text2); }
+    .athlete-tab.active .tab-label { color: var(--accent); }
+
+    /* ── Plan athletes strip ──────────────────────────────────────── */
+    .plan-athletes { display: flex; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .plan-athlete-card { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 2px; padding: 10px 12px; min-width: 0; }
+    .plan-athlete-name { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .plan-athlete-targets { display: flex; flex-direction: column; gap: 3px; }
+    .plan-athlete-target { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; }
+
     /* ── Mobile responsive ────────────────────────────────────────── */
     .bottom-nav {
       display: none;
       position: fixed; bottom: 0; left: 0; right: 0;
-      height: 62px;
-      background: rgba(17,17,22,0.96);
+      height: 68px;
+      background: rgba(9,9,12,0.97);
       border-top: 1px solid var(--border);
       z-index: 50;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
     .bottom-nav-item {
-      flex: 1; min-width: 44px;
+      flex: 1;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 4px; cursor: pointer; color: var(--text2);
+      gap: 5px; cursor: pointer; color: var(--text2);
       font-size: 9px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
-      padding: 8px 4px; -webkit-tap-highlight-color: transparent; transition: color 0.12s;
+      padding: 10px 4px; -webkit-tap-highlight-color: transparent; transition: color 0.12s;
       position: relative;
     }
     .bottom-nav-item.active { color: var(--accent); }
     .bottom-nav-item.active::before {
-      content: ''; position: absolute; top: 0; left: 25%; right: 25%;
-      height: 2px; background: var(--accent); border-radius: 0 0 2px 2px;
+      content: ''; position: absolute; top: 0; left: 20%; right: 20%;
+      height: 2px; background: var(--accent); border-radius: 0 0 3px 3px;
     }
+
+    /* Session set row mobile */
+    .set-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .set-badge { width: 28px; height: 28px; border-radius: 2px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
     @media (max-width: 640px) {
       .sidebar { display: none; }
-      .main { padding: 16px 14px 72px; }
+      .main { padding: 16px 14px 80px; }
       .bottom-nav { display: flex; }
       /* Grids → single column */
       .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr !important; }
@@ -186,6 +212,16 @@
       /* Modal full screen on mobile */
       .modal { max-height: 95vh; margin: 0; border-radius: 0; }
       .modal-overlay { padding: 0; align-items: flex-end; }
+      /* Session set row on mobile: wider inputs */
+      .set-row input { font-size: 18px !important; padding: 10px !important; }
+      /* Athlete tabs full width */
+      .athlete-tab { padding: 12px 8px; }
+      /* Plan athletes strip: stack on very small screens */
+      .plan-athletes { flex-direction: column; }
+      /* Session header: stack on mobile */
+      .session-header { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+      .session-header-actions { width: 100%; display: flex; gap: 8px; }
+      .session-header-actions .btn { flex: 1; justify-content: center; }
     }
   </style>
 </head>
@@ -378,7 +414,16 @@ function validateImport(raw) {
 function loadData() {
   try {
     const s = localStorage.getItem(STORAGE_KEY);
-    if (s) return { ...defaultData, ...JSON.parse(s) };
+    if (s) {
+      const parsed = JSON.parse(s);
+      return {
+        ...defaultData,
+        ...parsed,
+        // Deep merge training so partial saves don't lose uebungen/sessions
+        training: { ...defaultData.training, ...(parsed.training || {}) },
+        settings: { ...defaultData.settings, ...(parsed.settings || {}) },
+      };
+    }
   } catch {}
   return defaultData;
 }
@@ -1727,8 +1772,8 @@ const calc1RM = (kg, reps) => reps === 1 ? kg : Math.round(kg * (1 + reps / 30))
 const round25 = (kg) => Math.round(kg / 2.5) * 2.5;
 
 function Training({ data, setData }) {
-  const td = data.training || { uebungen: DEFAULT_UEBUNGEN, sessions: [], plan: null };
-  const uebungen = td.uebungen.length ? td.uebungen : DEFAULT_UEBUNGEN;
+  const td = data.training || {};
+  const uebungen = (td.uebungen || []).length ? td.uebungen : DEFAULT_UEBUNGEN;
   const sessions = td.sessions || [];
 
   // Migriere altes Plan-Format (rm1 direkt im Plan → athletes-Array)
@@ -1744,7 +1789,11 @@ function Training({ data, setData }) {
   const [newMuskel, setNewMuskel] = useState('');
   const [setupPhase, setSetupPhase] = useState(0);
   const [setupAthletes, setSetupAthletes] = useState([{ name: '', tests: {} }, { name: '', tests: {} }]);
-  const [rm1Updates, setRm1Updates] = useState(null); // PR-Prompt nach Session
+  const [rm1Updates, setRm1Updates] = useState(null);
+  // Hooks für Sub-Views — müssen immer an derselben Position aufgerufen werden (Rules of Hooks)
+  const [activeSetupAthlete, setActiveSetupAthlete] = useState(0);
+  const [verlaufAthlete, setVerlaufAthlete] = useState(0);
+  const [rm1Selected, setRm1Selected] = useState([]);
 
   const save = (next) => setData(d => ({ ...d, training: { ...td, ...next } }));
 
@@ -1840,7 +1889,10 @@ function Training({ data, setData }) {
     }
 
     save({ sessions: newSessions });
-    if (updates.length) setRm1Updates(updates);
+    if (updates.length) {
+      setRm1Updates(updates);
+      setRm1Selected(updates.map((_, i) => i));
+    }
     setView('overview');
     setActiveSession(null);
   };
@@ -1898,7 +1950,6 @@ function Training({ data, setData }) {
   // ── Plan Setup ────────────────────────────────────────────────────────────
   if (view === 'planSetup') {
     const phase = PHASEN_CONFIG[setupPhase];
-    const [activeSetupAthlete, setActiveSetupAthlete] = React.useState(0);
     const curAth = setupAthletes[activeSetupAthlete];
     const setAthleteName = (i, name) => setSetupAthletes(prev => prev.map((a, idx) => idx === i ? { ...a, name } : a));
     const setAthTest = (ai, uid, field, val) => setSetupAthletes(prev => prev.map((a, idx) => idx !== ai ? a : {
@@ -2001,26 +2052,26 @@ function Training({ data, setData }) {
 
     return (
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: multiAthlete ? 16 : 28 }}>
+        <div className="session-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: multiAthlete ? 16 : 28 }}>
           <div>
             {phase && <div style={{ fontSize: 11, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>{phase.name} · Woche {activeSession.week}</div>}
             <div style={{ fontSize: 22, fontWeight: 700 }}>{activeSession.date}</div>
           </div>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="session-header-actions" style={{ display: 'flex', gap: 10 }}>
             <button className="btn btn-ghost" onClick={() => setView('overview')}>Abbrechen</button>
-            <button className="btn btn-primary" onClick={saveSession}>Speichern</button>
+            <button className="btn btn-primary" onClick={saveSession}>Session speichern</button>
           </div>
         </div>
 
         {/* Athlet-Tabs (nur bei mehreren Athleten) */}
         {multiAthlete && (
-          <div style={{ display: 'flex', gap: 4, marginBottom: 20 }}>
+          <div className="athlete-tabs">
             {athletes.map((a, i) => (
-              <button key={i} onClick={() => setActiveAthlete(i)} style={{
-                flex: 1, padding: '8px', border: `1px solid ${activeAthlete === i ? 'var(--accent)' : 'var(--border)'}`,
-                background: activeAthlete === i ? 'rgba(0,229,160,0.07)' : 'var(--surface)',
-                color: activeAthlete === i ? 'var(--accent)' : 'var(--text2)', cursor: 'pointer', fontWeight: activeAthlete === i ? 700 : 400, fontSize: 14
-              }}>{a.name}</button>
+              <button key={i} onClick={() => setActiveAthlete(i)} className={`athlete-tab${activeAthlete === i ? ' active' : ''}`}>
+                <div className="tab-dot" />
+                <span style={{ fontSize: 14, fontWeight: 700, color: activeAthlete === i ? 'var(--text)' : 'var(--text2)' }}>{a.name}</span>
+                <span className="tab-label">{activeAthlete === i ? 'aktiv' : 'wechseln'}</span>
+              </button>
             ))}
           </div>
         )}
@@ -2059,22 +2110,22 @@ function Training({ data, setData }) {
                       ? setEpley > plan.athletes[activeAthlete].rm1[log.uebungId]
                       : false;
                     return (
-                      <div key={si} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                        <div style={{ width: 28, height: 28, borderRadius: 2, background: set.kg ? phaseColor + '22' : 'var(--surface2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <div key={si} className="set-row">
+                        <div className="set-badge" style={{ background: set.kg ? phaseColor + '22' : 'var(--surface2)' }}>
                           <span className="num" style={{ fontSize: 11, fontWeight: 700, color: set.kg ? phaseColor : 'var(--text3)' }}>{si+1}</span>
                         </div>
                         <input type="number" inputMode="decimal" placeholder="kg" value={set.kg}
                           onChange={e => updateSet(li, si, 'kg', e.target.value)}
-                          style={{ width: 76, fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: 15, textAlign: 'center', padding: '8px' }} />
-                        <span style={{ color: 'var(--text3)', fontSize: 12, fontWeight: 500 }}>kg</span>
+                          style={{ flex: '0 0 80px', fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: 15, textAlign: 'center', padding: '8px' }} />
+                        <span style={{ color: 'var(--text3)', fontSize: 12, fontWeight: 500, flexShrink: 0 }}>kg</span>
                         <input type="number" inputMode="numeric" placeholder="×" value={set.reps}
                           onChange={e => updateSet(li, si, 'reps', e.target.value)}
-                          style={{ width: 58, fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: 15, textAlign: 'center', padding: '8px' }} />
-                        <span style={{ color: 'var(--text3)', fontSize: 12 }}>reps</span>
-                        {isNewPR && <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--yellow)', letterSpacing: 0.5, padding: '2px 6px', background: 'rgba(245,166,35,0.12)', borderRadius: 2 }}>PR</span>}
+                          style={{ flex: '0 0 60px', fontFamily: 'var(--font-num)', fontWeight: 700, fontSize: 15, textAlign: 'center', padding: '8px' }} />
+                        <span style={{ color: 'var(--text3)', fontSize: 12, flexShrink: 0 }}>reps</span>
+                        {isNewPR && <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--yellow)', letterSpacing: 0.5, padding: '2px 6px', background: 'rgba(245,166,35,0.12)', borderRadius: 2, flexShrink: 0 }}>PR</span>}
                         {log.sets.length > 1 && (
                           <button onClick={() => removeSet(li, si)}
-                            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 2px' }}>×</button>
+                            style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'var(--text3)', cursor: 'pointer', fontSize: 18, lineHeight: 1, padding: '0 4px', minHeight: 'unset' }}>×</button>
                         )}
                       </div>
                     );
@@ -2094,7 +2145,6 @@ function Training({ data, setData }) {
 
   // ── Verlauf ───────────────────────────────────────────────────────────────
   if (view === 'verlauf') {
-    const [verlaufAthlete, setVerlaufAthlete] = React.useState(0);
     const athletes = plan?.athletes || [];
     return (
       <div>
@@ -2155,35 +2205,32 @@ function Training({ data, setData }) {
       </div>
 
       {/* PR-Update Prompt */}
-      {rm1Updates && (() => {
-        const [selected, setSelected] = React.useState(rm1Updates.map((_, i) => i));
-        return (
-          <div style={{ marginBottom: 20, padding: '16px', background: 'var(--surface)', border: '1px solid var(--yellow)' }}>
-            <div style={{ fontWeight: 700, color: 'var(--yellow)', marginBottom: 8 }}>Neue Bestleistungen — 1RM aktualisieren?</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
-              {rm1Updates.map((u, i) => {
-                const ath = plan.athletes[u.ai];
-                const ueb = uebungen.find(x => x.id === u.uebungId);
-                const checked = selected.includes(i);
-                return (
-                  <div key={i} onClick={() => setSelected(s => checked ? s.filter(x => x !== i) : [...s, i])}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13 }}>
-                    <div style={{ width: 14, height: 14, border: `2px solid ${checked ? 'var(--accent)' : 'var(--border)'}`, background: checked ? 'var(--accent)' : 'transparent', flexShrink: 0 }} />
-                    <span style={{ color: 'var(--text2)' }}>{ath?.name} · {ueb?.name}</span>
-                    <span style={{ marginLeft: 'auto' }}>{u.oldRm1 > 0 ? `${u.oldRm1}kg` : '—'} → <strong style={{ color: 'var(--accent)' }}>{u.newRm1}kg</strong></span>
-                  </div>
-                );
-              })}
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-ghost" onClick={() => setRm1Updates(null)}>Ignorieren</button>
-              <button className="btn btn-primary" onClick={() => applyRm1Updates(rm1Updates.filter((_, i) => selected.includes(i)))}>
-                Übernehmen ({selected.length})
-              </button>
-            </div>
+      {rm1Updates && (
+        <div style={{ marginBottom: 20, padding: '16px', background: 'var(--surface)', border: '1px solid var(--yellow)' }}>
+          <div style={{ fontWeight: 700, color: 'var(--yellow)', marginBottom: 8 }}>Neue Bestleistungen — 1RM aktualisieren?</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
+            {rm1Updates.map((u, i) => {
+              const ath = plan.athletes[u.ai];
+              const ueb = uebungen.find(x => x.id === u.uebungId);
+              const checked = rm1Selected.includes(i);
+              return (
+                <div key={i} onClick={() => setRm1Selected(s => checked ? s.filter(x => x !== i) : [...s, i])}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13 }}>
+                  <div style={{ width: 14, height: 14, border: `2px solid ${checked ? 'var(--accent)' : 'var(--border)'}`, background: checked ? 'var(--accent)' : 'transparent', flexShrink: 0 }} />
+                  <span style={{ color: 'var(--text2)' }}>{ath?.name} · {ueb?.name}</span>
+                  <span style={{ marginLeft: 'auto' }}>{u.oldRm1 > 0 ? `${u.oldRm1}kg` : '—'} → <strong style={{ color: 'var(--accent)' }}>{u.newRm1}kg</strong></span>
+                </div>
+              );
+            })}
           </div>
-        );
-      })()}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-ghost" onClick={() => setRm1Updates(null)}>Ignorieren</button>
+            <button className="btn btn-primary" onClick={() => applyRm1Updates(rm1Updates.filter((_, i) => rm1Selected.includes(i)))}>
+              Übernehmen ({rm1Selected.length})
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Aktiver Plan-Status ── */}
       {plan && (() => {
@@ -2253,6 +2300,33 @@ function Training({ data, setData }) {
                     );
                   })}
                 </div>
+
+                {/* Athletes Strip */}
+                {plan.athletes?.length > 0 && (
+                  <div className="plan-athletes">
+                    {plan.athletes.map((ath, ai) => {
+                      const topExercises = uebungen
+                        .filter(u => u.aktiv !== false && planTarget(u.id, ai))
+                        .slice(0, 3);
+                      return (
+                        <div key={ai} className="plan-athlete-card">
+                          <div className="plan-athlete-name">{ath.name}</div>
+                          <div className="plan-athlete-targets">
+                            {topExercises.map(u => (
+                              <div key={u.id} className="plan-athlete-target">
+                                <span style={{ color: 'var(--text2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 100 }}>{u.name}</span>
+                                <span className="num" style={{ color: phaseColor, fontWeight: 700 }}>{planTarget(u.id, ai)} kg</span>
+                              </div>
+                            ))}
+                            {topExercises.length === 0 && (
+                              <div style={{ fontSize: 11, color: 'var(--text3)' }}>Kein 1RM gesetzt</div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -2369,12 +2443,14 @@ function App() {
 
   const pageProps = { data, setData };
 
-  // Kurze Labels für die Bottom Nav (max 7 Zeichen)
-  const BOTTOM_LABELS = {
-    dashboard: 'Home', lebensmittel: 'Essen', rezepte: 'Rezepte',
-    training: 'Training', plan: 'Plan', einkauf: 'Einkauf',
-    kalkulator: 'Kalkul.', settings: 'Einst.'
-  };
+  // Nur 5 Items in der Mobile Bottom Nav
+  const BOTTOM_PAGES = [
+    { id: 'dashboard', label: 'Home', icon: 'home' },
+    { id: 'training',  label: 'Training', icon: 'dumbbell' },
+    { id: 'plan',      label: 'Plan', icon: 'calendar' },
+    { id: 'einkauf',   label: 'Einkauf', icon: 'cart' },
+    { id: 'settings',  label: 'Mehr', icon: 'settings' },
+  ];
 
   return (
     <div id="app" style={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
@@ -2401,12 +2477,12 @@ function App() {
         {page === 'settings' && <Settings {...pageProps} />}
       </div>
 
-      {/* Mobile Bottom Nav */}
+      {/* Mobile Bottom Nav — 5 Items */}
       <div className="bottom-nav">
-        {PAGES.map(p => (
+        {BOTTOM_PAGES.map(p => (
           <div key={p.id} className={`bottom-nav-item${page === p.id ? ' active' : ''}`} onClick={() => setPage(p.id)}>
-            <Icon name={p.icon} size={20} />
-            <span>{BOTTOM_LABELS[p.id]}</span>
+            <Icon name={p.icon} size={22} />
+            <span>{p.label}</span>
           </div>
         ))}
       </div>
